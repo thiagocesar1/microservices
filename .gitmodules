@@ -1,0 +1,12 @@
+[submodule "naming-server"]
+	path = naming-server
+	url = https://github.com/thiagocesar1/naming-server
+[submodule "api-gateway"]
+	path = api-gateway
+	url = https://github.com/thiagocesar1/api-gateway
+[submodule "book-service"]
+	path = book-service
+	url = https://github.com/thiagocesar1/book-service
+[submodule "cambio-service"]
+	path = cambio-service
+	url = https://github.com/thiagocesar1/cambio-service
