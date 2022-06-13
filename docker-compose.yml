@@ -1,0 +1,93 @@
+version: '3.4'
+
+services:
+  zipkin:
+    image: openzipkin/zipkin:2.23.2
+    ports:
+      - 9411:9411
+    networks:
+      - micro-network
+
+  cambio-db:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+      - TZ=America/Sao_Paulo
+      - POSTGRES_DB=cambio_service
+    volumes:
+      - ./initcambiodb.sql:/docker-entrypoint-initdb.d/init.sql
+    #  - /opt/database:/var/lib/postgresql/data
+    networks:
+      - micro-network
+
+  book-db:
+    image: postgres:latest
+    ports:
+      - 5433:5432
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+      - TZ=America/Sao_Paulo
+      - POSTGRES_DB=book_service
+    #volumes:
+    #  - /opt/database:/var/lib/postgresql/data
+    networks:
+      - micro-network
+
+  naming-server:
+    image: thiagocesar1/namingserver:0.0.1-SNAPSHOT
+    ports:
+      - 8761:8761
+    networks:
+      - micro-network
+
+  api-gateway:
+    image: thiagocesar1/apigateway:0.0.1-SNAPSHOT
+    ports:
+      - 8765:8765
+    depends_on:
+      - naming-server
+    environment:
+      SPRING.ZIPKIN.BASEURL: http://zipkin:9411/
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+    networks:
+      - micro-network
+
+  cambio-service:
+    image: thiagocesar1/cambioservice:0.0.1-SNAPSHOT
+    ports:
+      - 8000:8000
+    depends_on:
+      - naming-server
+      - cambio-db
+    environment:
+      SPRING.ZIPKIN.BASEURL: http://zipkin:9411/
+      SPRING.DATASOURCE.URL: jdbc:postgresql://cambio-db:5432/cambio_service?useSSL=false&enableTLSProtocols=TLSv1.2&serverTimezone=UTC
+      SPRING.FLYWAY.URL: jdbc:postgresql://cambio-db:5432/cambio_service?useSSL=false&enableTLSProtocols=TLSv1.2&serverTimezone=UTC
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+    networks:
+      - micro-network
+
+  book-service:
+    image: thiagocesar1/bookservice:0.0.1-SNAPSHOT
+    ports:
+      - 8100:8100
+    depends_on:
+      - naming-server
+      - book-db
+    environment:
+      SPRING.ZIPKIN.BASEURL: http://zipkin:9411/
+      SPRING.DATASOURCE.URL: jdbc:postgresql://book-db:5432/book_service?useSSL=false&enableTLSProtocols=TLSv1.2&serverTimezone=UTC
+      SPRING.FLYWAY.URL: jdbc:postgresql://book-db:5432/book_service?useSSL=false&enableTLSProtocols=TLSv1.2&serverTimezone=UTC
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      FEIGN.CLIENT.URL.GATEWAYURL: http://api-gateway:8765/
+    networks:
+      - micro-network
+networks:
+  micro-network:
+    driver: bridge
