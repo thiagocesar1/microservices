@@ -34,3 +34,15 @@ jobs:
       - name: Build Eureka Naming Server
         working-directory: ./naming-server
         run: mvn spring-boot:build-image -DskipTests
+        
+      - name: Build Api Gateway
+        working-directory: ./api-gateway
+        run: mvn spring-boot:build-image -DskipTests
+      
+      - name: Build Cambio Service
+        working-directory: ./cambio-service
+        run: mvn spring-boot:build-image -DskipTests
+      
+      - name: Build Book Service
+        working-directory: ./book-service
+        run: mvn spring-boot:build-image -DskipTests
