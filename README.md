@@ -28,3 +28,4 @@ Microsservi;o responsavel por retornar os dados do livro com o valor monetario c
 - Swagger
 - Flyway para migrations
 - Resilience4j (Circuit Breaker)
+- Github Actions para CI/CD com publicacao das Docker Images no Dockerhub.
