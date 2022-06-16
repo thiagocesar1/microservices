@@ -8,13 +8,13 @@ Projeto criado para aplicar e testar tecnologias/bibliotecas em uma arquitetura 
 Utiliza o Eureka como Service Registry/Discovery.
 
 >  **API Gateway** <br>
-Utiliza a bibliotec Spring Cloud Gateway para centralizar as chamadas e encaminhar para os outros microsservi;os.
+Utiliza a bibliotec Spring Cloud Gateway para centralizar as chamadas e encaminhar para os outros microsserviços.
 
 >  **Cambio Service** <br>
-Microsservi;o responsavel por converter o valor para a moeda solicitada.
+Microsserviço responsavel por converter o valor para a moeda solicitada.
  
 >  **Book Service** <br>
-Microsservi;o responsavel por retornar os dados do livro com o valor monetario convertido.
+Microsserviço responsavel por retornar os dados do livro com o valor monetario convertido.
 
 <h2> Tecnologias/Bibliotecas utilizadas </h2>
 
